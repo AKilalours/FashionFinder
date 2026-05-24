@@ -157,12 +157,12 @@ Commercial systems are black boxes. FashionFinder is built from first principles
 │  k-NN  k=10     │   │  FAISS IVF nlist=100│   │  color_index.py      │
 │  444,190 edges  │   │  87 MB index        │   │  brand_index.py      │
 └────────┬────────┘   └──────────┬──────────┘   └──────────┬───────────┘
-         │                       │                          │
-         └───────────────────────┴──────────────────────────┘
+         │                       │                         │
+         └───────────────────────┴─────────────────────────┘
                                  │  QUERY TIME
                                  ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    Pre-Filter Stage (Hash Tables)                       │
+┌────────────────────────────────────────────────────────────────────────┐
+│                    Pre-Filter Stage (Hash Tables)                      │
 │   Hash Table (cat)    → ~70% candidate reduction   O(1)                │
 │   Nested Hash (color) → further reduction          O(1)                │
 │   Brand Index         → exact brand matching       O(1)                │
@@ -175,7 +175,7 @@ Commercial systems are black boxes. FashionFinder is built from first principles
 │  cosine scan    │   │  2-hop search   │       │  nprobe=10 cells   │
 │  exact results  │   │  approximate    │       │  approximate       │
 └────────┬────────┘   └────────┬────────┘       └──────────┬─────────┘
-         └────────────────────┴────────────────────────────┘
+         └───────────────── ───┴───────────────────────────┘
                                 │
                                 ▼
                 ┌───────────────────────────────┐
@@ -186,7 +186,7 @@ Commercial systems are black boxes. FashionFinder is built from first principles
                                 ▼
                 ┌───────────────────────────────┐
                 │  FastAPI REST API  (:8001)    │
-                │  20+ endpoints               │
+                │  20+ endpoints                │
                 └───────────────┬───────────────┘
                                 │
                                 ▼
@@ -207,8 +207,8 @@ Commercial systems are black boxes. FashionFinder is built from first principles
 ║  Structure            ║  File                ║  Role & Complexity                    ║
 ╠═══════════════════════╬══════════════════════╬═══════════════════════════════════════╣
 ║  Hash Table           ║  hash_index.py       ║  category → indices  O(1) lookup      ║
-║  Nested Hash Table    ║  color_index.py      ║  category → color → indices  O(1)    ║
-║  Brand Hash Index     ║  brand_index.py      ║  brand → category → indices  O(1)    ║
+║  Nested Hash Table    ║  color_index.py      ║  category → color → indices  O(1)     ║
+║  Brand Hash Index     ║  brand_index.py      ║  brand → category → indices  O(1)     ║
 ║  k-NN Graph (AdjList) ║  knn_graph.py        ║  Similarity graph  BFS  O(log n)      ║
 ║  Min-Heap / PQ        ║  heap_ranker.py      ║  Top-k ranking  O(n log k)            ║
 ║  FAISS IVF Index      ║  faiss_index.py      ║  Cluster ANN  sub-linear search       ║
@@ -595,54 +595,54 @@ python benchmark.py --n_queries 80 --k 10
 ```
 ╔════════════════════════════════════════════╦══════════════════════════════════════════════╗
 ║  Akilan Manivannan (100863473)             ║  Akila Lourdes Miriyala Francis (100863383)  ║
-║  GitHub: AkilanManivannanak               ║  GitHub: AKilalours                          ║
+║  GitHub: AkilanManivannanak                ║  GitHub: AKilalours                          ║
 ╠════════════════════════════════════════════╬══════════════════════════════════════════════╣
-║  DATA PIPELINE                            ║  DATA PIPELINE                               ║
-║  • Kaggle dataset acquisition             ║  • styles.csv metadata parsing & cleaning    ║
-║  • Image validation and filtering         ║  • Product ID to filepath index mapping      ║
-║  • Dataset split strategy                 ║  • Embedding pipeline orchestration          ║
+║  DATA PIPELINE                             ║  DATA PIPELINE                               ║
+║  • Kaggle dataset acquisition              ║  • styles.csv metadata parsing & cleaning    ║
+║  • Image validation and filtering          ║  • Product ID to filepath index mapping      ║
+║  • Dataset split strategy                  ║  • Embedding pipeline orchestration          ║
 ╠════════════════════════════════════════════╬══════════════════════════════════════════════╣
-║  DATA STRUCTURES                          ║  DATA STRUCTURES                             ║
-║  • k-NN Graph design and build            ║  • Hash Table (hash_index.py)                ║
-║  • knn_graph.py adjacency list            ║  • Nested Hash Table (color_index.py)        ║
-║  • BFS traversal implementation           ║  • Brand Hash Index (brand_index.py)         ║
-║  • Graph save/load (pickle)               ║  • Min-Heap ranker (heap_ranker.py)          ║
-║  • MMR reranker (mmr_reranker.py)        ║  • Searcher unified interface (searcher.py)  ║
+║  DATA STRUCTURES                           ║  DATA STRUCTURES                             ║
+║  • k-NN Graph design and build             ║  • Hash Table (hash_index.py)                ║
+║  • knn_graph.py adjacency list             ║  • Nested Hash Table (color_index.py)        ║
+║  • BFS traversal implementation            ║  • Brand Hash Index (brand_index.py)         ║
+║  • Graph save/load (pickle)                ║  • Min-Heap ranker (heap_ranker.py)          ║
+║  • MMR reranker (mmr_reranker.py)          ║  • Searcher unified interface (searcher.py)  ║
 ╠════════════════════════════════════════════╬══════════════════════════════════════════════╣
-║  ML / RETRIEVAL                           ║  ML / RETRIEVAL                              ║
-║  • ResNet18 embedder (embedder.py)        ║  • FAISS IVF index (faiss_index.py)          ║
-║  • build_embeddings.py pipeline           ║  • build_faiss.py pipeline                   ║
-║  • build_graph.py pipeline                ║  • Baseline brute-force cosine search        ║
-║  • Graph search method                    ║  • L2 normalization strategy                 ║
-║  • Style Transfer search module           ║  • CLIP fusion search module                 ║
+║  ML / RETRIEVAL                            ║  ML / RETRIEVAL                              ║
+║  • ResNet18 embedder (embedder.py)         ║  • FAISS IVF index (faiss_index.py)          ║
+║  • build_embeddings.py pipeline            ║  • build_faiss.py pipeline                   ║
+║  • build_graph.py pipeline                 ║  • Baseline brute-force cosine search        ║
+║  • Graph search method                     ║  • L2 normalization strategy                 ║
+║  • Style Transfer search module            ║  • CLIP fusion search module                 ║
 ╠════════════════════════════════════════════╬══════════════════════════════════════════════╣
-║  BACKEND / API                            ║  BACKEND / API                               ║
-║  • /search/by_id endpoint                 ║  • /search/upload endpoint                   ║
-║  • /graph_neighbors BFS endpoint          ║  • /benchmark endpoint                       ║
-║  • /image file serving                    ║  • /categories + /colors + /brands           ║
-║  • /brand_compare endpoint                ║  • CORS + middleware setup                   ║
-║  • /outfit/complete endpoint              ║  • /trending + /search_history               ║
-║  • FastAPI routing + error handling       ║  • /realtime/add live ingestion              ║
+║  BACKEND / API                             ║  BACKEND / API                               ║
+║  • /search/by_id endpoint                  ║  • /search/upload endpoint                   ║
+║  • /graph_neighbors BFS endpoint           ║  • /benchmark endpoint                       ║
+║  • /image file serving                     ║  • /categories + /colors + /brands           ║
+║  • /brand_compare endpoint                 ║  • CORS + middleware setup                   ║
+║  • /outfit/complete endpoint               ║  • /trending + /search_history               ║
+║  • FastAPI routing + error handling        ║  • /realtime/add live ingestion              ║
 ╠════════════════════════════════════════════╬══════════════════════════════════════════════╣
-║  UI / FRONTEND                            ║  UI / FRONTEND                               ║
-║  • Graph Visualization page               ║  • Search page (upload + ID + URL + multi)  ║
-║  • NetworkX + Matplotlib graph            ║  • Benchmark Charts page                     ║
-║  • Brand Compare page                     ║  • Live latency + recall bar charts          ║
-║  • Visual DNA / GradCAM page              ║  • Product cards with score bars             ║
-║  • Style Transfer page                    ║  • Outfit Completion page                    ║
-║  • Sidebar system stats panel             ║  • AI Assistant page (RAG + Claude)          ║
+║  UI / FRONTEND                             ║  UI / FRONTEND                               ║
+║  • Graph Visualization page                ║  • Search page (upload + ID + URL + multi)   ║
+║  • NetworkX + Matplotlib graph             ║  • Benchmark Charts page                     ║
+║  • Brand Compare page                      ║  • Live latency + recall bar charts          ║
+║  • Visual DNA / GradCAM page               ║  • Product cards with score bars             ║
+║  • Style Transfer page                     ║  • Outfit Completion page                    ║
+║  • Sidebar system stats panel              ║  • AI Assistant page (RAG + Claude)          ║
 ╠════════════════════════════════════════════╬══════════════════════════════════════════════╣
-║  EVALUATION                               ║  EVALUATION                                  ║
-║  • benchmark.py architecture              ║  • Recall@k metric implementation            ║
-║  • Latency measurement (p50/p95/p99)      ║  • Results CSV export                        ║
-║  • Multi-method comparison logic          ║  • Interpretation + documentation            ║
+║  EVALUATION                                ║  EVALUATION                                  ║
+║  • benchmark.py architecture               ║  • Recall@k metric implementation            ║
+║  • Latency measurement (p50/p95/p99)       ║  • Results CSV export                        ║
+║  • Multi-method comparison logic           ║  • Interpretation + documentation            ║
 ╠════════════════════════════════════════════╬══════════════════════════════════════════════╣
-║  MLOPS / DEPLOYMENT                       ║  MLOPS / DEPLOYMENT                          ║
-║  • GitHub repo setup                      ║  • GitHub repo (AKilalours)                  ║
-║  • HuggingFace Spaces deployment          ║  • SSH key configuration                     ║
-║  • Docker containerization               ║  • KMP_DUPLICATE_LIB_OK fix discovery        ║
-║  • Port isolation (8001 / 8502)           ║  • README + submission documentation         ║
-║  • ngrok public tunneling                 ║  • Postmortem authoring                      ║
+║  MLOPS / DEPLOYMENT                        ║  MLOPS / DEPLOYMENT                          ║
+║  • GitHub repo setup                       ║  • GitHub repo (AKilalours)                  ║
+║  • HuggingFace Spaces deployment           ║  • SSH key configuration                     ║
+║  • Docker containerization                 ║  • KMP_DUPLICATE_LIB_OK fix discovery        ║
+║  • Port isolation (8001 / 8502)            ║  • README + submission documentation         ║
+║  • ngrok public tunneling                  ║  • Postmortem authoring                      ║
 ╚════════════════════════════════════════════╩══════════════════════════════════════════════╝
 ```
 
